@@ -128,6 +128,27 @@ class CovidNationalData {
       resultData.add(convert.jsonDecode(response.body)['statewise'][selectedStateIndex]['deaths']);
       resultData.add(convert.jsonDecode(response.body)['statewise'][selectedStateIndex]['recovered']);
       resultData.add(convert.jsonDecode(response.body)['statewise'][selectedStateIndex]['active']);
+      resultData.add(convert.jsonDecode(response.body)['statewise'][selectedStateIndex]['lastupdatedtime']);
+    } else {
+      print(response.statusCode);
+      return null;
+    }
+    return resultData;
+  }
+
+  Future<dynamic> getCovidStateTodayData(String state) async {
+
+    List<String> resultData = [];
+
+    int selectedStateIndex = stateMap[state];
+
+    http.Response response = await http.get(statesUrl);
+    if (response.statusCode == 200) {
+      resultData.add(convert.jsonDecode(response.body)['statewise'][selectedStateIndex]['deltaconfirmed']);
+      resultData.add(convert.jsonDecode(response.body)['statewise'][selectedStateIndex]['deltadeaths']);
+      resultData.add(convert.jsonDecode(response.body)['statewise'][selectedStateIndex]['deltarecovered']);
+      resultData.add(convert.jsonDecode(response.body)['statewise'][selectedStateIndex]['active']);
+      resultData.add(convert.jsonDecode(response.body)['statewise'][selectedStateIndex]['lastupdatedtime']);
     } else {
       print(response.statusCode);
       return null;
@@ -137,7 +158,7 @@ class CovidNationalData {
 
   Future<dynamic> getCovidDistrictData(String district) async {
 
-    List<int> resultData = [];
+    List<dynamic> resultData = [];
 
     http.Response response = await http.get(districtUrl);
     if (response.statusCode == 200) {
@@ -149,6 +170,33 @@ class CovidNationalData {
       print(response.statusCode);
       return null;
     }
+
+    http.Response responseState = await http.get(statesUrl);
+    if (responseState.statusCode == 200) {
+      resultData.add(convert.jsonDecode(responseState.body)['statewise'][6]['lastupdatedtime']);
+    } else {
+      print(responseState.statusCode);
+      return null;
+    }
+
+    return resultData;
+  }
+
+  Future<dynamic> getCovidDistrictTodayData(String district) async {
+
+    List<int> resultData = [];
+
+    http.Response response = await http.get(districtUrl);
+    if (response.statusCode == 200) {
+      resultData.add(convert.jsonDecode(response.body)['Karnataka']['districtData']['$district']['delta']['confirmed']);
+      resultData.add(convert.jsonDecode(response.body)['Karnataka']['districtData']['$district']['delta']['deceased']);
+      resultData.add(convert.jsonDecode(response.body)['Karnataka']['districtData']['$district']['delta']['recovered']);
+      resultData.add(convert.jsonDecode(response.body)['Karnataka']['districtData']['$district']['active']);
+    } else {
+      print(response.statusCode);
+      return null;
+    }
+
     return resultData;
   }
 }
